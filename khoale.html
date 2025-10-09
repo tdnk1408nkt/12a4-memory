@@ -1,3 +1,4 @@
+ChuaCuuDc
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -133,7 +134,7 @@ function createFallingMessage(text) {
     el.className = "falling message";
     el.textContent = msg;
     el.style.left = Math.random() * 95 + "vw";
-    el.style.setProperty('--depth', ${(Math.random() * 800 - 400)}px);
+    el.style.setProperty('--depth', (Math.random() * 800 - 400) + "px");
     world.appendChild(el);
 
     setTimeout(() => el.remove(), 11000); // xóa sau khi rơi
@@ -144,9 +145,9 @@ function createFallingMessage(text) {
     const imgSrc = images[Math.floor(Math.random() * images.length)];
     const el = document.createElement("div");
     el.className = "falling image";
-    el.innerHTML = <img src="${imgSrc}" alt="Ảnh">;
+    el.innerHTML = `<img src="${imgSrc}" alt="Ảnh">`;
     el.style.left = Math.random() * 95 + "vw";
-    el.style.setProperty('--depth', ${(Math.random() * 800 - 400)}px);
+    el.style.setProperty('--depth', `${Math.random() * 800 - 400}px`);
     world.appendChild(el);
 
     setTimeout(() => el.remove(), 11000); // xóa sau khi rơi
@@ -183,7 +184,7 @@ function createFallingMessage(text) {
     rotateX -= dy * 0.3;
     prevX = e.clientX;
     prevY = e.clientY;
-    world.style.transform = rotateX(${rotateX}deg) rotateY(${rotateY}deg);
+    world.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
   });
 </script>
 
