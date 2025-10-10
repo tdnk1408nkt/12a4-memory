@@ -1,0 +1,241 @@
+<!DOCTYPE html> 
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title> HPWD </title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Pacifico', cursive;
+   background: linear-gradient(#a290c7, #bb8fb4,#c18fac,#d980d5, #e190ec); 
+    }
+
+    .scene {
+      width: 100vw;
+      height: 100vh;
+      perspective: 1200px;
+      cursor: grab;
+      touch-action: none; /* Ngăn chặn hành vi cuộn/zoom mặc định */
+    }
+
+    .world {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .falling {
+      position: absolute;
+      opacity: 0;
+      animation: fall 10s linear forwards;
+    }
+
+    .message {
+      font-size: 22px;
+      color:#fff;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+  
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .image img {
+      width: 120px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 0 15px #0ff;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-150px) translateZ(var(--depth));
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) translateZ(var(--depth));
+        opacity: 0;
+      }
+    }
+
+
+    
+
+    @keyframes moveBg {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50%, -50%); }
+    }
+
+
+  </style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+  <div class="world" id="world"></div>
+</div>
+
+<script>
+  const messages = [
+    "Chúc Pthao ngày càng xinh đẹp",
+    "Luôn tự tin vào bản thân nhóe",
+    "Đỗ nguyện vọng 1 nha bè",
+    "Sống thật vui vẻ và hạnh phúc nhóe",
+    "Thành công nhóe Phưn Thảo!",
+    "Thực hiện được ước mơ của mình nhoa"
+  ];
+
+  const images = [
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/1918460d29aea3f0fabf.jpg",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/FB_IMG_1759581550499.jpg",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/FB_IMG_1759581556085.jpg",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/IMG_20251004_194213.jpg",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/IMG_20251004_194413.jpg",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/IMG_2050%20-%20Ph%C6%B0%C6%A1ng%20Anh.jpeg",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%2012A4%20n%E1%BB%AF%202/Ph%C6%B0%C6%A1ng%20Th%E1%BA%A3o/IMG_2090%20-%20Ph%C6%B0%C6%A1ng%20Anh.jpeg"
+];
+
+
+  const world = document.getElementById("world");
+
+  function createFallingMessage() {
+    const msg = messages[Math.floor(Math.random() * messages.length)];
+    const el = document.createElement("div");
+    el.className = "falling message";
+    el.textContent = msg;
+    el.style.left = Math.random() * 95 + "vw";
+    el.style.setProperty('--depth', (Math.random() * 800 - 400) + "px");
+    world.appendChild(el);
+    setTimeout(() => el.remove(), 11000);
+  }
+
+  function createFallingImage() {
+    const imgSrc = images[Math.floor(Math.random() * images.length)];
+    const el = document.createElement("div");
+    el.className = "falling image";
+    el.innerHTML = `<img src="${imgSrc}" alt="Ảnh">`;
+    el.style.left = Math.random() * 95 + "vw";
+    el.style.setProperty('--depth', `${Math.random() * 800 - 400}px`);
+    world.appendChild(el);
+    setTimeout(() => el.remove(), 11000);
+  }
+
+  setInterval(createFallingMessage, 500);
+  setInterval(createFallingImage, 1200);
+
+  // 3D xoay và zoom
+  let isDragging = false;
+  let prevX, prevY;
+  let rotateX = 0, rotateY = 0;
+  let scale = 1;
+
+  const scene = document.getElementById("scene");
+
+  function updateTransform() {
+    world.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+  }
+
+  // Xoay bằng chuột
+  scene.addEventListener("mousedown", e => {
+    isDragging = true;
+    prevX = e.clientX;
+    prevY = e.clientY;
+    scene.style.cursor = "grabbing";
+  });
+
+  window.addEventListener("mouseup", () => {
+    isDragging = false;
+    scene.style.cursor = "grab";
+  });
+
+  window.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+    const dx = e.clientX - prevX;
+    const dy = e.clientY - prevY;
+    rotateY += dx * 0.3;
+    rotateX -= dy * 0.3;
+    prevX = e.clientX;
+    prevY = e.clientY;
+    updateTransform();
+  });
+
+  // Thu phóng bằng lăn chuột
+  scene.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    scale += e.deltaY * -0.001;
+    scale = Math.min(Math.max(0.5, scale), 2);
+    updateTransform();
+  }, { passive: false });
+
+  // Thu phóng bằng cảm ứng pinch
+  let initialDistance = null;
+  let initialScale = 1;
+
+  scene.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+      initialDistance = getDistance(e.touches[0], e.touches[1]);
+      initialScale = scale;
+    }
+  }, { passive: false });
+
+  scene.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2 && initialDistance !== null) {
+      e.preventDefault();
+      const currentDistance = getDistance(e.touches[0], e.touches[1]);
+      const zoom = currentDistance / initialDistance;
+      scale = initialScale * zoom;
+      scale = Math.min(Math.max(0.5, scale), 2);
+      updateTransform();
+    }
+  }, { passive: false });
+
+  function getDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  // Xoay bằng cảm ứng 1 ngón
+  let touchActive = false;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  scene.addEventListener("touchstart", e => {
+    if (e.touches.length === 1) {
+      touchActive = true;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+    }
+  }, { passive: false });
+
+  scene.addEventListener("touchmove", e => {
+    if (!touchActive || e.touches.length !== 1) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    rotateY += dx * 0.3;
+    rotateX -= dy * 0.3;
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    updateTransform();
+  }, { passive: false });
+
+  scene.addEventListener("touchend", () => {
+    touchActive = false;
+  });
+</script>
+
+</body>
+</html>
