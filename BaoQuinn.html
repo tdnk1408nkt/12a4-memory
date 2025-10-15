@@ -38,7 +38,7 @@
     }
 
     .message {
-      font-size: 30px;
+      font-size: 35px;
       color:#ffffff;
       text-shadow: 0 0 5px rgb(255, 0, 179), 0 0 10px rgb(255, 0, 179), 0 0 20px rgb(255, 0, 230);
   
@@ -48,11 +48,11 @@
     }
 
     .image img {
-      width: 230px;
-      height: 280px;
+      width: 190px;
+      height: 220px;
       object-fit: cover;
       border-radius: 8px;
-      box-shadow: 0 0 15px #0ff;
+      box-shadow: 0 0 10px #0ff;
       pointer-events: none;
       user-select: none;
     }
@@ -97,7 +97,10 @@ const messages = [
 ];
 
 const images = [
-  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%20-/BQ.png"
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/%E1%BA%A2nh%20-/BQ.png",
+  "https://raw.githubusercontent.com/tdnk1408nkt/12a4-memory/main/Ảnh%20-/Capture.PNG"
+
+
   
 ];
 
@@ -128,17 +131,26 @@ const images = [
   
 
  let lastLeft = null; // nhớ vị trí ảnh cũ
+let lastImage = null; // nhớ ảnh cũ
 
 function createFallingImage() {
-  const imgSrc = images[Math.floor(Math.random() * images.length)];
+  let imgSrc;
+
+  // Chọn ảnh khác ảnh cũ
+  do {
+    imgSrc = images[Math.floor(Math.random() * images.length)];
+  } while (lastImage && imgSrc === lastImage);
+
+  lastImage = imgSrc;
+
   const el = document.createElement("div");
   el.className = "falling image";
   el.innerHTML = `<img src="${imgSrc}" alt="Ảnh">`;
 
-  // Chọn vị trí mới không trùng vị trí cũ
+  // Chọn vị trí mới không trùng vị trí cũ (cách ít nhất 35vw)
   let newLeft;
   do {
-    newLeft = Math.random() * 68; // đơn vị là vw
+    newLeft = Math.random() * 68;
   } while (lastLeft !== null && Math.abs(newLeft - lastLeft) < 35);
 
   el.style.left = newLeft + "vw";
@@ -150,11 +162,12 @@ function createFallingImage() {
   // Sau 15 giây thì xóa ảnh
   setTimeout(() => el.remove(), 15000);
 
-  // Sau 10 giây (ảnh rơi nửa chặng đường) => tạo ảnh mới
+  // Sau 8 giây thì tạo ảnh mới (để có tối đa 2 ảnh cùng lúc)
   setTimeout(() => {
     createFallingImage();
   }, 8000);
 }
+
 // Chỉ gọi 1 lần ban đầu
 setInterval(createFallingMessage, 700);
 createFallingImage();
