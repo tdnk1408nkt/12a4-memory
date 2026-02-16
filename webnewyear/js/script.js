@@ -3,7 +3,7 @@
 "use strict";
 
 // Khởi tạo đối tượng nhạc
-const backgroundMusic = new Audio("https://github.com/tdnk1408nkt/12a4-memory/blob/main/webnewyear/music.mp3"); 
+const backgroundMusic = new Audio("https://tdnk1408nkt.github.io/12a4-memory/webnewyear/music.mp3"); 
 backgroundMusic.loop = true; 
 backgroundMusic.volume = 0.7;
 
