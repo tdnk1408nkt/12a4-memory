@@ -7,19 +7,16 @@ const backgroundMusic = new Audio("https://tdnk1408nkt.github.io/12a4-memory/web
 backgroundMusic.loop = true; 
 backgroundMusic.volume = 0.7;
 
-// Khi người dùng nhấn vào màn hình, nhạc sẽ bắt đầu phát
-window.addEventListener('mousedown', function() {
-    if (backgroundMusic.paused) {
-        backgroundMusic.play().catch(e => console.log("Chờ tương tác để phát nhạc"));
-    }
-});
+const startMusic = () => {
+    backgroundMusic.play();
+    // Gỡ bỏ sự kiện sau khi đã kích hoạt xong
+    document.removeEventListener('touchstart', startMusic);
+    document.removeEventListener('click', startMusic);
+};
 
-// Hỗ trợ cả trên điện thoại (cảm ứng)
-window.addEventListener('touchstart', function() {
-    if (backgroundMusic.paused) {
-        backgroundMusic.play().catch(e => console.log("Chờ tương tác để phát nhạc"));
-    }
-});
+// 'touchstart' là sự kiện dành riêng cho màn hình cảm ứng điện thoại
+document.addEventListener('touchstart', startMusic); 
+document.addEventListener('click', startMusic);
 
 const IS_MOBILE = window.innerWidth <= 640;
 const IS_DESKTOP = window.innerWidth > 800;
