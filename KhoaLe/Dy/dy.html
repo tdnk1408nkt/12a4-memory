@@ -31,10 +31,11 @@
       position: relative;
     }
 
+    /* Tốc độ rơi */
     .falling {
       position: absolute;
       opacity: 0;
-      animation: fall 15s linear forwards;
+      animation: fall 10s linear forwards;
     }
 
     .message {
@@ -116,7 +117,7 @@
     el.style.left = Math.random() * 55 + "vw";
     el.style.setProperty('--depth', (Math.random() * 800 - 400) + "px");
     world.appendChild(el);
-    setTimeout(() => el.remove(), 11000);
+    setTimeout(() => el.remove(), 10000);
   }
 
   function createFallingImage() {
@@ -127,11 +128,12 @@
     el.style.left = Math.random() * 70 + "vw";
     el.style.setProperty('--depth', `${Math.random() * 800 - 400}px`);
     world.appendChild(el);
-    setTimeout(() => el.remove(), 11000);
+    setTimeout(() => el.remove(), 10000);
   }
 
-  setInterval(createFallingMessage, 600);
-  setInterval(createFallingImage, 2000);
+  /* số lượng câu */
+  setInterval(createFallingMessage, 300);
+  setInterval(createFallingImage, 1900);
 
   // 3D xoay và zoom
   let isDragging = false;
